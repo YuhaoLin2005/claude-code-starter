@@ -11,7 +11,8 @@
     },
     "playwright": {
       "command": "npx",
-      "args": ["-y", "@playwright/mcp"]
+      "args": ["-y", "@playwright/mcp", "--browser", "msedge"],
+      "_comment": "使用 Edge 浏览器（Chromium 内核），也可改为 --browser chrome / chromium / firefox / webkit"
     },
     "github": {
       "type": "http",
