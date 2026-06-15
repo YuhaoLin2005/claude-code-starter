@@ -1,6 +1,6 @@
 # Claude Code 开箱即用配置：DeepSeek + Windows 完整方案
 
-> A battle-tested Claude Code configuration for DeepSeek API on Windows. 9 MCP services, 9 custom agents, 6 quality rules, and RTK token optimization — everything you need to go from zero to productive in 15 minutes.
+> A battle-tested Claude Code configuration for DeepSeek API on Windows. 8 MCP services, 9 custom agents, 3-layer auto-backup, local OCR, and RTK token optimization — everything you need to go from zero to productive in 15 minutes.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-blue.svg)](#)
@@ -52,10 +52,13 @@ code-quality.md  patterns.md  performance.md  security.md  testing.md  workflow.
 
 | 类别 | 数量 | 包含内容 |
 |------|:--:|------|
-| 🧩 **MCP 服务** | 9 | 文件操作 · 浏览器自动化 · GitHub · PostgreSQL · 文档搜索(Context7) · 搜索(DuckDuckGo) · 图片识别(Vision) · LLM搜索(Parallel) · 持久化记忆(Squish) |
+| 🧩 **MCP 服务** | 8 | 文件操作 · 浏览器自动化 · GitHub · PostgreSQL · 文档搜索(Context7) · 搜索(DuckDuckGo) · 并行搜索(Parallel，多引擎同时查) · 持久化记忆(Squish) |
 | 🤖 **自定义 Agent** | 9 | 代码审查 · 安全检查 · TDD 向导 · 架构设计 · 构建排错 · 代码简化 · 文档更新 · Rust 审查 · 高级实现 |
-| 📋 **规则文件** | 6 | 代码质量 · 安全 · 测试 · 工作流(含自动备份) · 性能 · 设计模式 |
+| 📋 **规则文件** | 6 | 代码质量 · 安全 · 测试 · 工作流 · 性能 · 设计模式 |
+| 🛡️ **自动备份** | 3 层 | Hook 文件级备份（每次 Edit/Write 自动备份原文件）· SessionStart 快照（启动自动 git commit）· Git 兜底（手动回退到任意版本） |
 | ⚡ **RTK 集成** | — | Shell 命令自动精简，实测节省 55% token |
+| 🚀 **并行执行** | — | 子 Agent 并行处理 + 多引擎并行搜索，独立任务同时跑，效率翻倍 |
+| 🔍 **本地 OCR** | — | EasyOCR 离线截图文字识别，免 API Key，中文识别准确率 85%+，比 mcp-vision 更稳定 |
 | 🧠 **中文智能提醒** | — | 在合适场景用中文主动提示可用技能 |
 | 🪟 **Windows 友好** | — | MCP 路径、RTK hook、Python 环境都踩过坑了 |
 
@@ -89,11 +92,13 @@ cp templates/settings.local.json.example ~/.claude/settings.local.json
 
 折腾过程中踩过的坑，可能会帮你省一些时间：
 
-- **子 Agent 输出质量差**：默认用了 flash 模型，设 `CLAUDE_CODE_SUBAGENT_MODEL=deepseek-v4-pro` 后正常
-- **缓存命中率低**：加 `CLAUDE_CODE_ATTRIBUTION_HEADER="0"` 从 50% 提升到 90%+
+- **子 Agent 输出质量差**：默认用了 flash 模型处理子任务，复杂逻辑产出低下。设 `CLAUDE_CODE_SUBAGENT_MODEL=deepseek-v4-pro` 强制子 Agent 也用主力模型后正常
+- **缓存命中率低（原理）**：Claude Code 每次请求会自动注入 `ATTRIBUTION_HEADER`（含会话 ID、时间戳等变量信息），DeepSeek 的 prompt cache 会把这些变动字段当作"不同请求"，导致缓存命中率仅 ~50%。设 `CLAUDE_CODE_ATTRIBUTION_HEADER="0"` 关闭后从 50% 提升到 90%+，相当于每次请求少花一半 token
+- **长文本上下文利用**：DeepSeek V4 Pro 支持 1M 上下文，但默认紧凑阈值偏保守。设置 `autoCompactWindow=600K` + `CLAUDE_CODE_MAX_OUTPUT_TOKENS=32000` + `alwaysThinkingEnabled=true`，大重构不丢上下文、长输出不截断、复杂推理不省略
+- **并行执行加速**：同类独立任务（多个 agent 审查、多引擎搜索）通过并行调度同时执行，不用排队等。`parallel-search` MCP 一次发多条搜索、子 Agent 池化复用
 - **Windows MCP 路径**：filesystem 服务器的路径要写双反斜杠 `C:\\Users\\...`
-- **RTK 安装注意**：有个重名包 (Rust Type Kit)，别装错了
-- **Vision 图片识别**：DeepSeek 不支持图片，搭 mcp-vision + DashScope 桥接
+- **RTK 安装注意**：crates.io 上有个重名包 reachingforthejack/rtk (Rust Type Kit)，别装错了，要装 token-optimizer 那个
+- **图片识别方案**：DeepSeek 不支持图片输入。mcp-vision (DashScope API) 因认证机制不稳定已弃用，改用 **EasyOCR 本地识别**（`pip install easyocr`，离线运行，中文识别 85%+，免 API Key）。脚本：`.claude/scripts/ocr.py`
 - **PyTorch GPU**：QGIS 自带 Python 的 DLL 会冲突 (c10.dll 1114)，装独立 Python 解决
 
 更多踩坑写在了 [SETUP.md](SETUP.md) 各步骤的备注里。
