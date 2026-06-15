@@ -7,6 +7,7 @@
 | 项目 | 作者/团队 | 仓库 | 许可证 |
 |------|----------|------|--------|
 | **Claude Code** | Anthropic | [anthropics/claude-code](https://github.com/anthropics/claude-code) | Proprietary |
+| **Model Context Protocol (MCP)** | Anthropic | [modelcontextprotocol](https://github.com/modelcontextprotocol) | MIT |
 | **DeepSeek API** | 深度求索 | [platform.deepseek.com](https://platform.deepseek.com) | — |
 
 ## Token 优化
@@ -32,7 +33,14 @@
 
 | 项目 | 作者 | 仓库 | 说明 |
 |------|------|------|------|
-| **mattpocock/skills** | Matt Pocock | [github.com/mattpocock/skills](https://github.com/mattpocock/skills) | 工程化技能包（Issue 跟踪、Triage、TDD、PRD 等） |
+| **mattpocock/skills** | Matt Pocock | [github.com/mattpocock/skills](https://github.com/mattpocock/skills) | 工程化技能包，本配置使用了以下子技能： |
+| ├ grill-with-docs | Matt Pocock | 同上 | 领域文档生成器 — 自动沉淀项目知识 |
+| ├ triage | Matt Pocock | 同上 | 问题分类器 — 自动打标签、判优先级 |
+| ├ tdd | Matt Pocock | 同上 | 测试驱动开发向导 |
+| ├ to-issues | Matt Pocock | 同上 | 需求拆解器 — PRD → 小任务 |
+| ├ diagnose | Matt Pocock | 同上 | 问题诊断器 — 深入分析根因 |
+| ├ zoom-out | Matt Pocock | 同上 | 架构视角切换 — 全局审视 |
+| └ prototype | Matt Pocock | 同上 | 原型快速构建 — 验证可行性 |
 
 ## MCP 服务器
 
@@ -64,13 +72,19 @@
 
 ## Agent 设计灵感
 
-以下 Agent 的概念和检查清单借鉴了社区最佳实践：
+以下 Agent 的概念和检查清单借鉴了社区最佳实践，感谢这些知识源头：
 
-- **senior-dev**：借鉴了 Google SWE 最佳实践、PSR 编码标准
-- **code-reviewer**：OWASP Top 10、CWE、Google Code Review Guidelines
-- **security-reviewer**：OWASP Top 10 (2021)、CWE Top 25
-- **tdd-guide**：Kent Beck's Test-Driven Development、AAA Pattern
-- **build-error-resolver**：系统化排错方法论
+| Agent | 灵感来源 |
+|-------|---------|
+| **senior-dev** | Google SWE Best Practices、PSR 编码标准、Production-grade code review 方法论 |
+| **code-reviewer** | OWASP Top 10 (2021)、CWE Top 25、Google Code Review Guidelines |
+| **security-reviewer** | OWASP Top 10、CWE Top 25、SANS Secure Coding |
+| **tdd-guide** | Kent Beck's *Test-Driven Development: By Example*、AAA Pattern (Arrange-Act-Assert) |
+| **planner** | *The Pragmatic Programmer* (Hunt & Thomas)、软件架构方法论 |
+| **architect** | C4 Model (Simon Brown)、ADR (Architecture Decision Records)、SOLID 原则 |
+| **build-error-resolver** | 系统化排错方法论、Unix 哲学（do one thing well） |
+| **rust-reviewer** | *The Rust Programming Language*、Rust API Guidelines、Clippy lints |
+| **doc-updater** | *Docs as Code* 理念、Keep a Changelog 规范 |
 
 ## 规则与最佳实践
 
