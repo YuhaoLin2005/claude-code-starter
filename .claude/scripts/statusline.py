@@ -1,95 +1,97 @@
+#!/usr/bin/env python3
 """
-Claude Code Status Line — DeepSeek 定价校准版.
+Claude Code 状态行 — 项目名、上下文用量、模型、压缩次数。
 
-Claude Code 默认按 Anthropic 官方定价（$3/M 输入、$15/M 输出）计算 cost.total_cost_usd。
-使用 DeepSeek API 后端时，这个数字虚高 10-50 倍。
+压缩次数 = 会话累计输入 token / autoCompactWindow（600K）
+用于衡量模型"记忆退化程度"：压缩越多 → 越依赖摘要 → 幻觉风险越高。
+0 次=完整记忆，1-2 次=正常，3-4 次=注意，5+ 次=建议新开会话。
 
-本脚本绕开 Claude Code 的 cost 字段，直接按 token 数 × DeepSeek 实际定价重算：
-- 输入（90% 缓存命中，混合价）：$0.10/M tokens
-- 输出（无缓存）：$1.10/M tokens
-- USD → RMB：7.2
-
-使用方法：在 settings.json 中配置：
-  "statusLine": { "type": "command", "command": "python ~/.claude/scripts/statusline.py" }
+配置方式（settings.json）:
+  "statusLine": {
+    "type": "command",
+    "command": "python ~/.claude/scripts/statusline.py",
+    "padding": 0
+  }
 """
-import json
-import sys
 
+import sys, os, json
 
-# ── DeepSeek V4 Pro 定价（USD / 百万 tokens）────────────────────
-# 缓存命中价 $0.07/M，常规价 $0.28/M
-# 90% 缓存命中率 → 混合输入价 = 0.9×0.07 + 0.1×0.28 ≈ 0.091
-INPUT_PRICE_PER_M = 0.10   # 混合缓存输入价（略保守）
-OUTPUT_PRICE_PER_M = 1.10  # 输出价（无缓存优惠）
-USD_TO_RMB = 7.2
+# Windows GBK 兼容
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        sys.stdin.reconfigure(encoding='utf-8', errors='replace')
+    except (AttributeError, OSError):
+        pass
 
-# ── 外观 ────────────────────────────────────────────────────────
-BAR_WIDTH = 10
+# 上下文压缩阈值（与 settings.json 中 autoCompactWindow 一致）
+COMPACT_THRESHOLD = 600_000
 
-
-def colorize(text, code):
-    return f"\033[{code}m{text}\033[0m"
+# 终端颜色
+GREEN  = '\033[32m'
+YELLOW = '\033[33m'
+RED    = '\033[31m'
+CYAN   = '\033[36m'
+DIM    = '\033[2m'
+BOLD   = '\033[1m'
+RESET  = '\033[0m'
 
 
 def main():
     try:
-        data = json.load(sys.stdin)
-    except (json.JSONDecodeError, KeyboardInterrupt):
-        print("", end="")
+        raw = sys.stdin.read()
+        data = json.loads(raw) if raw.strip() else {}
+    except (json.JSONDecodeError, OSError):
+        print(f"{DIM}claude-code{RESET}")
         return
 
-    # ── 模型名 ──────────────────────────────────────────────────
-    model = data.get("model", {}).get("display_name", "DS")
-    if "deepseek" in model.lower():
-        model = model.replace("deepseek", "DS", 1)
-    if len(model) > 16:
-        model = model[:15] + "…"
+    # ── 项目名 ──
+    cwd = data.get('cwd', '') or data.get('workspace', {}).get('current_dir', '')
+    project = os.path.basename(cwd.rstrip('/\\')) if cwd else '?'
+    if len(project) > 20:
+        project = project[:17] + '...'
 
-    # ── Token 用量 ─────────────────────────────────────────────
-    cw = data.get("context_window", {})
-    input_tokens = cw.get("total_input_tokens", 0)
-    output_tokens = cw.get("total_output_tokens", 0)
-    context_size = cw.get("context_window_size", 200000)
+    # ── 上下文用量 ──
+    ctx = data.get('context_window', {})
+    pct = ctx.get('used_percentage', 0) or 0
 
-    # 兼容新版字段名
-    cu = cw.get("current_usage", {})
-    if isinstance(cu, dict):
-        input_tokens = cu.get("input_tokens", input_tokens)
-        output_tokens = cu.get("output_tokens", output_tokens)
-
-    # ── 成本（DeepSeek 定价）────────────────────────────────────
-    input_cost = input_tokens * INPUT_PRICE_PER_M / 1_000_000
-    output_cost = output_tokens * OUTPUT_PRICE_PER_M / 1_000_000
-    total_rmb = (input_cost + output_cost) * USD_TO_RMB
-
-    # ── 上下文用量 ──────────────────────────────────────────────
-    total_tokens = input_tokens + output_tokens
-    pct = min(99, int(total_tokens * 100 / max(1, context_size)))
-
-    filled = min(BAR_WIDTH, int(pct * BAR_WIDTH / 100))
-    bar = "█" * filled + "░" * (BAR_WIDTH - filled)
-
-    if pct < 40:
-        bar_str = colorize(bar, 32)
-        pct_str = colorize(f"{pct}%", 32)
-    elif pct < 60:
-        bar_str = colorize(bar, 33)
-        pct_str = colorize(f"{pct}%", 33)
+    if pct >= 60:
+        ctx_color, icon = RED,    '●'
+    elif pct >= 40:
+        ctx_color, icon = YELLOW, '●'
     else:
-        bar_str = colorize(bar, 31)
-        pct_str = colorize(f"{pct}%", 31)
+        ctx_color, icon = GREEN,  '●'
 
-    # ── 格式化成本 ──────────────────────────────────────────────
-    if total_rmb < 0.01:
-        cost_str = colorize(f"¥{total_rmb:.4f}", 2)
-    elif total_rmb < 1:
-        cost_str = f"¥{total_rmb:.3f}"
+    bar_filled = int(pct / 10)
+    bar_empty = 10 - bar_filled
+    bar = f'{ctx_color}{"▇" * bar_filled}{DIM}{"▇" * bar_empty}{RESET}'
+
+    # ── 模型 ──
+    model_name = data.get('model', {}).get('display_name', '?')
+
+    # ── 压缩次数（会话累计输入 / 600K）──
+    total_input = ctx.get('total_input_tokens', 0) or 0
+    compressions = total_input // COMPACT_THRESHOLD
+
+    if compressions == 0:
+        comp_label = f'{GREEN}记忆完整{RESET}'
+    elif compressions <= 2:
+        comp_label = f'{GREEN}压缩×{compressions}{RESET}'
+    elif compressions <= 4:
+        comp_label = f'{YELLOW}压缩×{compressions} ⚠{RESET}'
     else:
-        cost_str = f"¥{total_rmb:.2f}"
+        comp_label = f'{RED}压缩×{compressions} 🔥 建议新会话{RESET}'
 
-    # ── 输出 ────────────────────────────────────────────────────
-    print(f"{model} {bar_str} {pct_str} | {cost_str}", end="")
+    # ── 输出 ──
+    # 格式: 项目名 ▇▇▇▇░░░░░░ ● 35% | 模型 | 压缩状态
+    print(
+        f' {BOLD}{project}{RESET} '
+        f'{bar} '
+        f'{ctx_color}{icon} {int(pct)}%{RESET}'
+        f' {DIM}|{RESET} {CYAN}{model_name}{RESET}'
+        f' {DIM}|{RESET} {comp_label}'
+    )
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
