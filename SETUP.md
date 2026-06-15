@@ -46,8 +46,8 @@ setx ANTHROPIC_API_KEY "sk-your-deepseek-key"
 ## Step 3：克隆配置仓库
 
 ```powershell
-git clone https://github.com/YuhaoLin2005/claude-code-starter.git
-cd claude-code-starter
+git clone https://github.com/YuhaoLin2005/deepseek-claude-code-starter.git
+cd deepseek-claude-code-starter
 ```
 
 ---
@@ -223,4 +223,4 @@ RTK 是可选的。如果需要禁用，删除 `~/.claude/settings.json` 中 `ho
 
 - 阅读 [README.md](README.md) 了解完整功能
 - 看看 [踩坑笔记](README.md#踩坑笔记) 避开已知问题
-- 有问题提 [Issue](https://github.com/YuhaoLin2005/claude-code-starter/issues)
+- 有问题提 [Issue](https://github.com/YuhaoLin2005/deepseek-claude-code-starter/issues)
