@@ -132,9 +132,9 @@ cp templates/mcp.json.example ~/.mcp.json
 
 ---
 
-## 关于作者
+## 关于
 
-大三在读，PM 方向，AI + 代码结合是最感兴趣的方向。这个仓库是折腾副产品，觉得有用的整理出来了。
+这个仓库是日常折腾的副产品——Claude Code + DeepSeek + Windows 这套组合踩了不少坑，觉得对别人可能有用的就整理出来了。欢迎提 Issue 或 PR 一起完善。
 
 ---
 
