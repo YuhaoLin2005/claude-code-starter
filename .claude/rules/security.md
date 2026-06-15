@@ -1,5 +1,18 @@
 # Security
 
+## Repository Visibility — PRIVATE vs PUBLIC (CRITICAL)
+
+| 仓库类型 | 用途 | 要求 |
+|---------|------|------|
+| **Private** | 个人完整备份 | 可含路径/配置，不对外 |
+| **Public** | 分享/模板 | 必须脱敏审查后才能 push |
+
+**Public repo push checklist:**
+- [ ] 无个人文件路径（`C:\Users\xxx`、`/home/xxx`）
+- [ ] 无 token/key/secret/password
+- [ ] 无内部 IP、服务器地址
+- [ ] settings.local.json 在 .gitignore 中
+
 ## Mandatory Checks (Before ANY Commit)
 
 - [ ] No hardcoded secrets (API keys, passwords, tokens)

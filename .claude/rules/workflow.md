@@ -1,5 +1,17 @@
 # Development Workflow
 
+## 🛡️ AUTO-BACKUP (Recommended Safety Net)
+
+> Before modifying files, ensure you can roll back. Git is the cheapest insurance.
+
+**Before ANY Write/Edit operation:**
+1. Check if project is a git repo → `git status`
+2. If NOT → `git init && git add -A && git commit -m "chore: initial backup"`
+3. If dirty → `git add -A && git commit -m "chore: pre-task snapshot — <what you're about to do>"`
+4. After each significant change → commit with descriptive message
+
+**Rollback:** `git reset --hard HEAD~1` reverts the last change.
+
 ## Feature Implementation Pipeline
 
 **0. Research & Reuse** (mandatory before new implementation)
