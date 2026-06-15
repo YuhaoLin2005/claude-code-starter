@@ -16,6 +16,14 @@
 |------|------|------|------|
 | **RTK (Rust Token Killer)** | @reachingforthejack | [github.com/reachingforthejack/rtk](https://github.com/reachingforthejack/rtk) | CLI 代理，60-90% Bash token 节省 |
 
+## 自动备份系统
+
+| 组件 | 技术 | 说明 |
+|------|------|------|
+| **PreToolUse Hook** | Claude Code Hooks API | Edit/Write 前自动备份原文件到 `.claude/backups/` |
+| **SessionStart Hook** | Claude Code Hooks API | 会话启动自动 git commit + 家目录配置同步 |
+| **Git** | [git-scm.com](https://git-scm.com) | 底层版本控制，三层备份体系的最后兜底 |
+
 ## Claude Code 插件
 
 | 插件 | 来源 | 说明 |
@@ -52,21 +60,25 @@
 | **PostgreSQL** | `@modelcontextprotocol/server-postgres` | [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) |
 | **Context7** | `@upstash/context7-mcp` | [upstash/context7](https://github.com/upstash/context7) |
 | **DuckDuckGo** | `duckduckgo-mcp-server` | NPM |
-| **Vision** | `mcp-vision` | [hahahahanb/mcp-vision](https://github.com/hahahahanb/mcp-vision) |
 | **Parallel Search** | Parallel AI Search | [search.parallel.ai](https://search.parallel.ai) |
 | **Squish Memory** | `squish-memory` | NPM（本地 SQLite 持久化记忆） |
 
-## Vision 后端
+## 截图文字识别（OCR）
 
-| 服务 | 提供方 | 链接 |
-|------|--------|------|
-| **DashScope qwen-vl-max** | 阿里云 | [dashscope.aliyun.com](https://dashscope.aliyun.com) |
+mcp-vision (DashScope API) 因认证机制不稳定已弃用，改用离线方案：
+
+| 项目 | 作者/团队 | 仓库 | 说明 |
+|------|----------|------|------|
+| **EasyOCR** | Jaided AI | [github.com/JaidedAI/EasyOCR](https://github.com/JaidedAI/EasyOCR) | 深度学习 OCR，支持 80+ 语言，离线运行免 API Key |
+| **OpenCV** | OpenCV Team | [opencv.org](https://opencv.org) | 图像预处理（灰度化、二值化、放大），提升识别率 |
+| **PyTorch** | Meta AI | [pytorch.org](https://pytorch.org) | EasyOCR 底层推理框架 |
 
 ## Python / Node 工具链
 
 | 工具 | 作者/团队 | 链接 |
 |------|----------|------|
 | **uv** | Astral | [astral.sh](https://astral.sh) |
+| **uvx** | Astral | Python 包一键执行（原 mcp-vision 启动方式） |
 | **Node.js** | OpenJS Foundation | [nodejs.org](https://nodejs.org) |
 | **npx** | npm Inc. | [npmjs.com](https://www.npmjs.com) |
 
