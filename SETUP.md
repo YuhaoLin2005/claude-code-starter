@@ -117,7 +117,6 @@ cp templates/settings.local.json.example ~/.claude/settings.local.json
 | mcp-vision | 图片识别 | 可选（需 DashScope Key） |
 | postgres | 数据库查询 | 可选（需 PostgreSQL） |
 | parallel-search | LLM 优化搜索 | 可选（免 Key） |
-| sequential-thinking | 结构化思维链 | 可选 |
 | squish | 持久化记忆 | 推荐 |
 
 ### 2. `~/.claude/settings.local.json`

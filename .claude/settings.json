@@ -21,6 +21,7 @@
   "fileCheckpointingEnabled": true,
   "showTurnDuration": true,
   "todoFeatureEnabled": true,
+  "alwaysThinkingEnabled": true,
   "hooks": {
     "PreToolUse": [{
       "matcher": "Bash",

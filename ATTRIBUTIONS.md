@@ -46,7 +46,6 @@
 | **DuckDuckGo** | `duckduckgo-mcp-server` | NPM |
 | **Vision** | `mcp-vision` | [hahahahanb/mcp-vision](https://github.com/hahahahanb/mcp-vision) |
 | **Parallel Search** | Parallel AI Search | [search.parallel.ai](https://search.parallel.ai) |
-| **Sequential Thinking** | `@modelcontextprotocol/server-sequential-thinking` | [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) |
 | **Squish Memory** | `squish-memory` | NPM（本地 SQLite 持久化记忆） |
 
 ## Vision 后端

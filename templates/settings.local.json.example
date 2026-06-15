@@ -75,8 +75,7 @@
       "mcp__context7__*",
       "mcp__postgres__*",
       "mcp__squish__*",
-      "mcp__parallel-search__*",
-      "mcp__sequential-thinking__*"
+      "mcp__parallel-search__*"
     ]
   },
   "_comment_mcp": "以下是启用的 MCP 服务器列表。这些需要在 ~/.mcp.json 或项目级 .claude.json 中配置对应的服务器信息。不需要的直接删除。",
@@ -89,7 +88,6 @@
     "duckduckgo",
     "mcp-vision",
     "parallel-search",
-    "sequential-thinking",
     "squish"
   ]
 }

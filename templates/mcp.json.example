@@ -37,11 +37,6 @@
       "url": "https://search.parallel.ai/mcp",
       "_comment": "免 Key 的 LLM 优化搜索引擎，一次调用返回带引用的摘要"
     },
-    "sequential-thinking": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
-      "_comment": "结构化思维链推理，适合复杂问题的分步分析"
-    },
     "squish": {
       "command": "npx",
       "args": ["-y", "squish-memory"],
