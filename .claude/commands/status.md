@@ -4,18 +4,38 @@ description: 查看 Claude Code 配置状态总览
 
 # /status — 配置状态总览
 
-快速查看当前 Claude Code 所有配置的状态。
+运行配置健康检查脚本，一键查看所有配置状态。
 
-## 检查项
+## 执行步骤
 
-1. **模型配置** — 当前使用的模型、API endpoint
-2. **MCP 服务** — 列出所有 MCP 服务及连接状态
-3. **Agent 列表** — `ls ~/.claude/agents/` 统计数量和文件名
-4. **规则文件** — `ls ~/.claude/rules/` 列出所有规则
-5. **RTK 状态** — `rtk gain` 显示 token 节省统计
-6. **Git 备份** — 检查 `~/.claude/backups/` 目录和最近备份文件
-7. **环境变量** — 检查关键环境变量是否设置（不显示具体值）
+### 1. 运行检查脚本
 
-## 输出格式
+```bash
+python ~/.claude/scripts/config-check.py
+```
 
-用表格汇总以上各项的检查结果，每项标记 ✅/⚠️/❌。
+如需快速模式（跳过耗时检查）：
+
+```bash
+python ~/.claude/scripts/config-check.py --quick
+```
+
+### 2. 检查内容
+
+脚本会自动检查以下项目：
+
+| 类别 | 检查项 |
+|------|--------|
+| 核心配置 | settings.json 语法、.mcp.json 语法 |
+| 环境变量 | API 网关、模型名称、缓存优化、超时设置 |
+| 规则 & Agent | 规则文件数量、Agent 定义数量 |
+| MCP 服务 | 所有服务配置、是否有硬编码密钥 |
+| 备份系统 | PreToolUse Hook、SessionStart Hook、备份文件 |
+| Hooks | RTK Hook、备份 Hook |
+| Windows 路径 | 双反斜杠格式检查 |
+
+### 3. 输出
+
+- 每项标记 ✓ / ✗ / ⚠
+- 问题项附带具体修复建议
+- 汇总通过/失败数量

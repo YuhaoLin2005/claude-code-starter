@@ -1,0 +1,8 @@
+# .desensitize-allow — 脱敏白名单
+# 每行一个正则表达式，匹配到的内容将被扫描器跳过
+# 以 # 开头的行是注释
+#
+# 示例：
+# example@email\.com
+# sk-your-placeholder-key-here
+#
