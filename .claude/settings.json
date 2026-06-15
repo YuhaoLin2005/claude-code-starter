@@ -22,6 +22,10 @@
   "showTurnDuration": true,
   "todoFeatureEnabled": true,
   "alwaysThinkingEnabled": true,
+  "statusLine": {
+    "type": "command",
+    "command": "python ~/.claude/scripts/statusline.py"
+  },
   "hooks": {
     "PreToolUse": [{
       "matcher": "Bash",
