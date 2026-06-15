@@ -1,101 +1,71 @@
-# Claude Code Pro Config
+# Claude Code 小白友好配置
 
-> 把 Claude Code 配置到大神级别——DeepSeek v4 Pro 驱动，7 个 MCP 服务，9 个专业 Agent，6 套代码规则。
+> 一个普通学生折腾出来的 Claude Code 配置分享——踩过的坑、试过的方案、最后留下来好用的。
 
-## 这是什么？
+## 这为什么会有这个仓库？
 
-一套经过实战打磨的 Claude Code 配置方案，面向**用 DeepSeek API 替代 Anthropic API** 的用户。核心思路：用 DeepSeek v4 Pro 的百万上下文 + 极低价格，搭配 Claude Code 的 Agent 体系，实现 10-50 倍成本优势。
+Claude Code 刚出来的时候我挺兴奋的，但 Claude API 太贵了，一个月下来光 API 费用就吃不消。后来发现可以用 DeepSeek 的兼容接口，成本降到原来的 1/10 不到，就开始认真折腾配置。
 
-## 适用谁？
+过程中踩了不少坑——MCP 怎么配、模型名怎么映射、Token 怎么省、Agent 怎么写才好用……网上资料零零散散的，组合起来费了不少功夫。最后折腾出来一套自己觉得好用的配置，想着"要是当初有人已经踩过这些坑就好了"，就整理出来分享。
 
-| 水平 | 能不能用 | 说明 |
-|------|---------|------|
-| 🟢 新手 | ✅ | 跟着 SETUP.md 一步步来就行，10 分钟搞定 |
-| 🔵 进阶 | ✅ | 可按需裁剪，关掉不需要的 MCP/Agent |
-| 🟣 大神 | ✅ | 拿去魔改，欢迎 PR 回来 |
+**不是大神配置，就是一个普通学生实践验证过的方案。**
 
-## 核心特性
+## 适合谁
 
-- **模型**：DeepSeek v4 Pro（1M 上下文，思考模式），配置了缓存前缀以最大化缓存命中率
-- **MCP 服务**：文件系统、Playwright 浏览器、GitHub API、PostgreSQL、Context7 文档、DuckDuckGo 搜索、Vision 图片分析
-- **自定义 Agent**：senior-dev（高级工程师）、code-reviewer、security-reviewer、tdd-guide、architect、planner、build-error-resolver、rust-reviewer、doc-updater
-- **代码规则**：代码质量、安全、测试、工作流、性能、模式——6 套专业规则
-- **Token 优化**：RTK CLI 代理（60-90% Bash 命令 token 节省）、ECC 插件
-- **快捷键**：Ctrl+R 审查 / Ctrl+G 提交 / Ctrl+Shift+P 计划模式 / Ctrl+L 查看日志 / Ctrl+Shift+V 视觉分析
+- 刚接触 Claude Code，不想从零配起
+- 想用 DeepSeek API 省钱但不知道怎么配
+- 想了解 MCP/Agent/Rules 怎么组合比较好用
+- 喜欢看别人踩坑记录而不是官方文档
+
+## 我用了什么
+
+- **模型**：DeepSeek v4 Pro（1M 上下文，带思考模式），用它的 Anthropic 兼容接口
+- **价格对比**：Claude Sonnet $3/百万 token → DeepSeek 约 ¥1/百万 token
+- **MCP 服务**：文件操作 / 浏览器自动化 / GitHub / 数据库 / 文档搜索 / 网页搜索 / 图片识别
+- **自定义 Agent**：代码审查、安全检查、测试驱动、架构设计、构建排错等
+- **规则文件**：代码质量、安全、测试、工作流——踩坑后总结的
 
 ## 快速开始
 
 ```bash
-# 1. 注册 DeepSeek API（https://platform.deepseek.com）
-# 2. 获取 API Key
-# 3. 克隆本仓库
-git clone https://github.com/YuhaoLin2005/claude-code-pro-config.git
-# 4. 复制到 Claude Code 配置目录
-cp -r claude-code-pro-config/.claude/* ~/.claude/
-cp claude-code-pro-config/templates/mcp.json.example ~/.mcp.json
-cp claude-code-pro-config/templates/settings.local.json.example ~/.claude/settings.local.json
-# 5. 编辑配置文件，填入你的路径和 Key
-# 6. 设置环境变量（见 SETUP.md）
-# 7. 重启 Claude Code
+# 1. 注册 DeepSeek 获取 API Key：https://platform.deepseek.com
+# 2. 克隆仓库
+git clone https://github.com/YuhaoLin2005/claude-code-starter.git
+cd claude-code-starter
+# 3. 复制到 Claude Code 配置目录
+cp -r .claude/* ~/.claude/
+cp templates/mcp.json.example ~/.mcp.json
+cp templates/settings.local.json.example ~/.claude/settings.local.json
+# 4. 编辑 ~/.mcp.json，把文件路径改成你自己的
+# 5. 设置环境变量
+#    Windows: setx ANTHROPIC_API_KEY "sk-your-key"
+#    Mac/Linux: export ANTHROPIC_API_KEY="sk-your-key"
+# 6. 重启 Claude Code
 ```
 
-**详细步骤见 [SETUP.md](SETUP.md)**
+**详细步骤看 [SETUP.md](SETUP.md)，每一步都写清楚了。不会的提 Issue。**
 
-## 文件结构
+## 踩坑记录（挑几个印象深的）
 
-```
-~/.claude/
-├── CLAUDE.md              # 规则入口（引用 rules/ 下的文件）
-├── RTK.md                 # RTK 使用指南
-├── settings.json          # 主配置（模型、hooks、插件）
-├── settings.local.json    # 本地权限（不提交到 Git）⚠️
-├── keybindings.json       # 快捷键
-├── ecc_config.json        # ECC 插件策略
-├── rules/                 # 6 套代码规范
-│   ├── code-quality.md
-│   ├── security.md
-│   ├── testing.md
-│   ├── workflow.md
-│   ├── performance.md
-│   └── patterns.md
-└── agents/                # 9 个专业 Agent
-    ├── senior-dev.md
-    ├── code-reviewer.md
-    ├── security-reviewer.md
-    ├── tdd-guide.md
-    ├── architect.md
-    ├── planner.md
-    ├── build-error-resolver.md
-    ├── rust-reviewer.md
-    └── doc-updater.md
-```
+1. **缓存命中率低**：加了 `CLAUDE_CODE_ATTRIBUTION_HEADER="0"` 这行环境变量后缓存命中率从 50% 跳到 90%+，每次对话省不少钱
+2. **子 Agent 默认用 flash 模型**：早先不知道 `CLAUDE_CODE_SUBAGENT_MODEL` 这个变量，代码审查质量一直上不去，换成 pro 后明显改善
+3. **Windows 路径问题**：MCP 的 filesystem 服务器在 Windows 下路径要用双反斜杠 `C:\\Users\\...`
+4. **RTK 装完不生效**：要先 `cargo install rtk`，同时注意有个重名包（Rust Type Kit），别装错了
+5. **Vision MCP 需要额外 API**：DeepSeek 不支持图片，得搭 mcp-vision + DashScope qwen-vl-max 桥接
 
-## 需要额外安装的
+更多踩坑在 [SETUP.md](SETUP.md) 里。
 
-| 工具 | 用途 | 安装 |
-|------|------|------|
-| DeepSeek API Key | 模型驱动 | [platform.deepseek.com](https://platform.deepseek.com) |
-| RTK | Token 优化（可选） | `cargo install rtk` |
-| GitHub CLI | GitHub 操作 | `winget install GitHub.cli` |
-| uv | mcp-vision 运行 | `pip install uv` 或 [astral.sh](https://astral.sh) |
-| PostgreSQL | postgres MCP（可选） | [postgresql.org](https://www.postgresql.org) |
-| DashScope API Key | Vision 图片分析（可选） | [dashscope.aliyun.com](https://dashscope.aliyun.com) |
+## 不是什么
 
-## 常见问题
+- ❌ 不是"最佳实践"——只是我自己试下来好用的
+- ❌ 不是"终极配置"——肯定有更好的方案
+- ❌ 不是"官方推荐"——跟 Anthropic 和 DeepSeek 都没关系
+- ✅ 就是一个普通用户的折腾记录，如果能帮你少走弯路就值了
 
-**Q: 我是 Anthropic API 用户，能直接用吗？**
-A: 需要改 `settings.json` 里的 `ANTHROPIC_BASE_URL` 和模型名。搜索 `deepseek` 全部替换为 `claude-sonnet-4-6` 之类的即可。
+## 感谢
 
-**Q: 为什么用 DeepSeek 而不是 Claude 原版？**
-A: DeepSeek v4 Pro 百万上下文 + ¥1/百万 token vs Claude Sonnet $3/百万 token。10-50 倍成本差距。
-
-**Q: 安全吗？**
-A: 本仓库不含任何密钥。所有敏感信息通过环境变量注入（`${VAR}` 语法）。`settings.local.json` 已加入 `.gitignore`。
-
-## 署名
-
-站在这巨人肩膀上：[完整署名列表](ATTRIBUTIONS.md)
+这个配置方案用到了很多开源项目和社区资源，没有他们就没有这套配置。完整列表在 [ATTRIBUTIONS.md](ATTRIBUTIONS.md)——感谢每一位作者和贡献者！
 
 ## 许可证
 
-MIT — 随便用，署名更好。
+MIT — 随便用，署名更好。有问题 [提 Issue](https://github.com/YuhaoLin2005/claude-code-starter/issues)。

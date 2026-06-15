@@ -82,8 +82,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 ```bash
 # 克隆仓库
-git clone https://github.com/YuhaoLin2005/claude-code-pro-config.git
-cd claude-code-pro-config
+git clone https://github.com/YuhaoLin2005/claude-code-starter.git
+cd claude-code-starter
 
 # 复制核心配置
 cp -r .claude/* ~/.claude/
@@ -173,4 +173,4 @@ echo $ANTHROPIC_API_KEY  # 确认环境变量
 | 只要基础规则 | 删除 `rules/` 下不需要的文件 |
 | 换用其他模型 | 修改 `settings.json` 中的 `ANTHROPIC_MODEL` |
 
-搞不定？[提 Issue](https://github.com/YuhaoLin2005/claude-code-pro-config/issues)。
+搞不定？[提 Issue](https://github.com/YuhaoLin2005/claude-code-starter/issues)。
