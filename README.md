@@ -9,6 +9,14 @@
 
 ---
 
+## 📸 截图
+
+| MCP 服务 (9/9) | RTK 令牌节省 (55%) | 自定义 Agent (9) |
+|:---:|:---:|:---:|
+| ![MCP Services](screenshots/01-mcp-services.png) | ![RTK Gain](screenshots/02-rtk-gain.png) | ![Agents](screenshots/03-agents.png) |
+
+---
+
 ## 这是什么
 
 Claude Code 很强大，但从零配到好用中间有太多细碎的事情——MCP 服务一个个找包、权限弹窗点到手软、子 Agent 模型不对导致输出质量差、命令动不动就占满 token……
