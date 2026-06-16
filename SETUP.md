@@ -104,24 +104,27 @@ cp templates\mcp.json.example $env:USERPROFILE\.mcp.json
   "env": {
     "ANTHROPIC_BASE_URL": "https://api.deepseek.com/anthropic",
     "ANTHROPIC_MODEL": "deepseek-v4-pro",
-    "CLAUDE_CODE_SUBAGENT_MODEL": "deepseek-v4-pro",
-    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "32000",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "deepseek-v4-flash",
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8000",
     "API_TIMEOUT_MS": "1200000",
     "CLAUDE_CODE_ATTRIBUTION_HEADER": "0",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "CLAUDE_CODE_EFFORT_LEVEL": "max",
     "autoCompactWindow": 600000
   },
   "alwaysThinkingEnabled": true
 }
 ```
 
-> 💡 `CLAUDE_CODE_ATTRIBUTION_HEADER="0"` 是关键——关闭后 DeepSeek 缓存命中率从 50% 提升到 90%+。
+> 💡 **模型分流策略**（Pro 主控 + Flash 子代理）：主 Agent 承载深度推理，使用 Pro 模型保证质量；子 Agent 被自动派去读文件、搜索代码、跑测试等一次性杂活，使用 Flash 模型处理。Pro 缓存命中后价格与 Flash 接近，但缓存未命中时成本是 Flash 的 3 倍——子代理任务缓存命中率天然低（每次读不同文件），用 Flash 正好规避了这个成本陷阱。
+>
+> 💡 `CLAUDE_CODE_ATTRIBUTION_HEADER="0"` 关闭追踪头，有助于保持 DeepSeek 缓存命中率稳定。`MAX_OUTPUT_TOKENS=8000` 覆盖绝大多数场景，大重构时可按需手动调高。
 
 ---
 
 ## Step 5：安装 RTK（可选，推荐）
 
-RTK 自动精简 Shell 命令输出，实测节省 55% token。
+RTK 自动精简 Shell 命令输出，实测节省 55-80% token。
 
 ```powershell
 # 安装 Rust（如果没有）
@@ -205,9 +208,11 @@ npm 全局安装路径不在 PATH 中。用 `npm list -g --depth=0` 查看安装
 2. 账户是否有余额：[platform.deepseek.com](https://platform.deepseek.com)
 3. `ANTHROPIC_BASE_URL` 是否正确
 
-### 缓存命中率为 0
+### 缓存命中率低
 
-检查 `CLAUDE_CODE_ATTRIBUTION_HEADER` 是否设为 `"0"`。
+1. 确认 `CLAUDE_CODE_ATTRIBUTION_HEADER` 设为 `"0"`
+2. DeepSeek 缓存是前缀匹配——多轮对话和长 system prompt 复用场景下命中率最高
+3. 单次短请求天然不会命中缓存，属正常现象
 
 ### RTK hook 报错
 
