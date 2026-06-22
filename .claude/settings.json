@@ -12,8 +12,9 @@
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "CLAUDE_CODE_EFFORT_LEVEL": "max",
     "CLAUDE_CODE_SUBAGENT_MODEL": "deepseek-v4-flash",
-    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "8000",
-    "MAX_MCP_OUTPUT_TOKENS": "25000"
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "16000",
+    "MAX_MCP_OUTPUT_TOKENS": "25000",
+    "ENABLE_TOOL_SEARCH": "auto:5"
   },
   "includeCoAuthoredBy": false,
   "theme": "dark",
