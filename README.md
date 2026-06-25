@@ -1,6 +1,7 @@
 # deepseek-claude-code-starter
 
-Claude Code + DeepSeek 组合的脚本和配置集——让 DeepSeek 在 Claude Code 中发挥出接近原生的体验。
+Claude Code + DeepSeek 组合的脚本和配置集——让 DeepSeek 在 Claude Code 中发挥出接近原生的体验。  
+*Scripts and configs for the Claude Code + DeepSeek combo — near-native DeepSeek experience inside Claude Code.*
 
 ## 核心优化
 
@@ -64,6 +65,11 @@ cd deepseek-claude-code-starter
 - 备份路径固定，修改需改脚本
 - 主要在 Windows 上验证，Mac/Linux 需自行调整路径
 - 不处理底层 API 转发——需自行配置 `~/.claude/settings.json` 中的 `ANTHROPIC_BASE_URL` 和 API Key
+
+## 相关项目
+
+- [claude-code-engineering-system](https://github.com/YuhaoLin2005/claude-code-engineering-system) — 本脚手架背后的方法论框架：对抗性自我审计/双轨记忆/三层安全/任务分流
+- [compact-counter-concept](https://github.com/YuhaoLin2005/compact-counter-concept) — 状态行中的压缩次数监控，发现压缩非线性效应
 
 ## 参考与致谢
 
